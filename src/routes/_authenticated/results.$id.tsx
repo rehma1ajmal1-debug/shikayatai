@@ -79,20 +79,20 @@ function ResultPage() {
               className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
               dir={isUrdu ? "rtl" : "ltr"}
             >
-              {data.formal_text}
+              {data.formal_complaint}
             </div>
           </Section>
 
           <Section icon={<Paperclip className="h-4 w-4" />} title="Evidence to attach">
             <ul className="list-disc space-y-1 pl-5" dir={isUrdu ? "rtl" : "ltr"}>
-              {data.evidence.map((e: string, i: number) => (
+              {data.suggested_evidence.map((e: string, i: number) => (
                 <li key={i} className="text-sm">{e}</li>
               ))}
             </ul>
           </Section>
 
           <Section icon={<MapPin className="h-4 w-4" />} title="Where to file">
-            <p className="text-sm" dir={isUrdu ? "rtl" : "ltr"}>{data.filing_locations}</p>
+            <p className="text-sm" dir={isUrdu ? "rtl" : "ltr"}>{data.filing_location}</p>
           </Section>
         </div>
       </Card>

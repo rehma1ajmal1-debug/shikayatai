@@ -10,11 +10,11 @@ const GenerateInput = z.object({
 
 const ResultSchema = z.object({
   subject: z.string(),
-  formal_text: z.string(),
+  formal_complaint: z.string(),
   department: z.string(),
   urgency: z.enum(["Low", "Medium", "High", "Emergency"]),
-  evidence: z.array(z.string()),
-  filing_locations: z.string(),
+  suggested_evidence: z.array(z.string()),
+  filing_location: z.string(),
 });
 
 async function callLovableAI(prompt: string, language: string) {
@@ -24,13 +24,13 @@ async function callLovableAI(prompt: string, language: string) {
   const system = `You are an assistant that converts informal civic complaints into professional formal complaints suitable for submission to government departments in Pakistan / South Asia. Always respond in ${language}. Return ONLY valid JSON matching this schema:
 {
   "subject": "Formal, concise subject line (max 15 words)",
-  "formal_text": "Full formal complaint body written in polite, professional tone. Include salutation, clear description of the issue, its impact, and a specific request for action. 150-300 words.",
+  "formal_complaint": "Full formal complaint body written in polite, professional tone. Include salutation, clear description of the issue, its impact, and a specific request for action. 150-300 words.",
   "department": "Specific responsible department name (e.g. 'WASA - Water and Sanitation Agency', 'K-Electric', 'Municipal Corporation Roads Department')",
   "urgency": "One of: Low | Medium | High | Emergency",
-  "evidence": ["List of 3-5 specific pieces of evidence the user should attach (photos, videos, receipts, etc.)"],
-  "filing_locations": "Where this type of complaint is typically filed. Include portals, hotlines, offices (e.g. 'Pakistan Citizen Portal (pmdu.gov.pk), local Union Council office, or department helpline 1334')."
+  "suggested_evidence": ["List of 3-5 specific pieces of evidence the user should attach (photos, videos, receipts, etc.)"],
+  "filing_location": "Where this type of complaint is typically filed. Include portals, hotlines, offices (e.g. 'Pakistan Citizen Portal (pmdu.gov.pk), local Union Council office, or department helpline 1334')."
 }
-If Urdu is requested, write subject, formal_text, department names, evidence items, and filing_locations in Urdu script.`;
+If the requested language is Urdu, ALL string values (subject, formal_complaint, department, every suggested_evidence item, and filing_location) MUST be written in Urdu script (Nastaʿlīq). Do not respond in English when Urdu is requested.`;
 
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -75,11 +75,11 @@ export const generateComplaint = createServerFn({ method: "POST" })
         category: data.category ?? null,
         language: data.language,
         subject: result.subject,
-        formal_text: result.formal_text,
+        formal_complaint: result.formal_complaint,
         department: result.department,
         urgency: result.urgency,
-        evidence: result.evidence,
-        filing_locations: result.filing_locations,
+        suggested_evidence: result.suggested_evidence,
+        filing_location: result.filing_location,
       })
       .select()
       .single();
