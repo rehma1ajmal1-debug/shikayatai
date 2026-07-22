@@ -19,13 +19,13 @@ export type Database = {
           category: string | null
           created_at: string
           department: string
-          evidence: string[]
-          filing_locations: string
-          formal_text: string
+          filing_location: string
+          formal_complaint: string
           id: string
           language: string
           original_text: string
           subject: string
+          suggested_evidence: string[]
           urgency: string
           user_id: string
         }
@@ -33,13 +33,13 @@ export type Database = {
           category?: string | null
           created_at?: string
           department: string
-          evidence?: string[]
-          filing_locations: string
-          formal_text: string
+          filing_location: string
+          formal_complaint: string
           id?: string
           language?: string
           original_text: string
           subject: string
+          suggested_evidence?: string[]
           urgency: string
           user_id: string
         }
@@ -47,13 +47,13 @@ export type Database = {
           category?: string | null
           created_at?: string
           department?: string
-          evidence?: string[]
-          filing_locations?: string
-          formal_text?: string
+          filing_location?: string
+          formal_complaint?: string
           id?: string
           language?: string
           original_text?: string
           subject?: string
+          suggested_evidence?: string[]
           urgency?: string
           user_id?: string
         }
