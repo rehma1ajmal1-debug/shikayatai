@@ -21,16 +21,16 @@ async function callLovableAI(prompt: string, language: string) {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
-  const system = `You are an assistant that converts informal civic complaints into professional formal complaints suitable for submission to government departments in Pakistan / South Asia. Always respond in ${language}. Return ONLY valid JSON matching this schema:
+  const system = `You are an assistant that converts informal civic complaints into professional formal complaints suitable for submission to government departments in Pakistan / South Asia. Return ONLY valid JSON matching this schema:
 {
-  "subject": "Formal, concise subject line (max 15 words)",
-  "formal_complaint": "Full formal complaint body written in polite, professional tone. Include salutation, clear description of the issue, its impact, and a specific request for action. 150-300 words.",
-  "department": "Specific responsible department name (e.g. 'WASA - Water and Sanitation Agency', 'K-Electric', 'Municipal Corporation Roads Department')",
-  "urgency": "One of: Low | Medium | High | Emergency",
-  "suggested_evidence": ["List of 3-5 specific pieces of evidence the user should attach (photos, videos, receipts, etc.)"],
-  "filing_location": "Where this type of complaint is typically filed. Include portals, hotlines, offices (e.g. 'Pakistan Citizen Portal (pmdu.gov.pk), local Union Council office, or department helpline 1334')."
+  "subject": "Formal, concise subject line (max 15 words). If the requested language is Urdu, write this in Urdu script (Nastaʿlīq); otherwise write it in English.",
+  "formal_complaint": "Full formal complaint body written in polite, professional tone in the requested language. Include salutation, clear description of the issue, its impact, and a specific request for action. 150-300 words.",
+  "department": "Specific responsible department name in English (e.g. 'WASA - Water and Sanitation Agency', 'K-Electric', 'Municipal Corporation Roads Department')",
+  "urgency": "One of exactly these English values only: Low, Medium, High, Emergency. Never translate this field. Never add parentheses or extra text.",
+  "suggested_evidence": ["List of 3-5 specific pieces of evidence the user should attach, in English (photos, videos, receipts, etc.)"],
+  "filing_location": "Where this type of complaint is typically filed, in English. Include portals, hotlines, offices (e.g. 'Pakistan Citizen Portal (pmdu.gov.pk), local Union Council office, or department helpline 1334')."
 }
-If the requested language is Urdu, ALL string values (subject, formal_complaint, department, every suggested_evidence item, and filing_location) MUST be written in Urdu script (Nastaʿlīq). Do not respond in English when Urdu is requested.`;
+Only the 'subject' and 'formal_complaint' fields should be translated to the requested language (Urdu script when Urdu is requested). All other fields — department, urgency, suggested_evidence, and filing_location — must remain in English. The urgency field must always be one of: Low, Medium, High, Emergency exactly.`;
 
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
