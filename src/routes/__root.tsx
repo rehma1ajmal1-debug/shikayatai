@@ -77,14 +77,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "ShikayatAI — File professional civic complaints in minutes" },
+      { name: "description", content: "Turn everyday problems — broken roads, water leaks, power cuts, garbage — into professional, ready-to-submit complaints with the right department and evidence." },
+      { property: "og:title", content: "ShikayatAI — Formal complaints made simple" },
+      { property: "og:description", content: "Describe the issue in plain language and get a formal complaint, department, urgency, and filing guidance." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
