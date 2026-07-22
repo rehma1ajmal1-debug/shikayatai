@@ -2,11 +2,11 @@ import { jsPDF } from "jspdf";
 
 export interface ComplaintPdfData {
   subject: string;
-  formal_text: string;
+  formal_complaint: string;
   department: string;
   urgency: string;
-  evidence: string[];
-  filing_locations: string;
+  suggested_evidence: string[];
+  filing_location: string;
   category?: string | null;
   created_at?: string;
 }
@@ -36,6 +36,14 @@ export function downloadComplaintPdf(c: ComplaintPdfData) {
   doc.setLineWidth(1);
   doc.line(marginX, y, pageWidth - marginX, y);
   y += 24;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(90, 90, 90);
+  const today = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  doc.text(`Date: ${today}`, marginX, y);
+  y += 18;
+  doc.setTextColor(20, 20, 20);
 
   doc.setTextColor(20, 20, 20);
   doc.setFontSize(11);
@@ -68,7 +76,7 @@ export function downloadComplaintPdf(c: ComplaintPdfData) {
   y += 16;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  const bodyLines = doc.splitTextToSize(c.formal_text, maxWidth);
+  const bodyLines = doc.splitTextToSize(c.formal_complaint, maxWidth);
   bodyLines.forEach((line: string) => {
     ensureSpace(16);
     doc.text(line, marginX, y);
@@ -83,7 +91,7 @@ export function downloadComplaintPdf(c: ComplaintPdfData) {
   y += 16;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  c.evidence.forEach((ev) => {
+  c.suggested_evidence.forEach((ev) => {
     const lines = doc.splitTextToSize(`• ${ev}`, maxWidth - 10);
     lines.forEach((line: string) => {
       ensureSpace(16);
@@ -100,7 +108,7 @@ export function downloadComplaintPdf(c: ComplaintPdfData) {
   y += 16;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  const locLines = doc.splitTextToSize(c.filing_locations, maxWidth);
+  const locLines = doc.splitTextToSize(c.filing_location, maxWidth);
   locLines.forEach((line: string) => {
     ensureSpace(16);
     doc.text(line, marginX, y);
