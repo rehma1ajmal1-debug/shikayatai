@@ -28,6 +28,15 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 const CATEGORIES = ["Water", "Electricity", "Roads", "Sanitation", "Police", "Other"] as const;
 
+const QUICK_CHIPS: { label: string; category: (typeof CATEGORIES)[number] }[] = [
+  { label: "Broken Road", category: "Roads" },
+  { label: "Water Leak", category: "Water" },
+  { label: "Electricity Fault", category: "Electricity" },
+  { label: "Garbage", category: "Sanitation" },
+  { label: "Noise", category: "Other" },
+  { label: "Illegal Parking", category: "Police" },
+];
+
 function DashboardPage() {
   const navigate = useNavigate();
   const generate = useServerFn(generateComplaint);
@@ -83,6 +92,29 @@ function DashboardPage() {
             <div className="text-right text-xs text-muted-foreground">{text.length}/4000</div>
           </div>
 
+          <div className="space-y-2">
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Quick pick</Label>
+            <div className="flex flex-wrap gap-2">
+              {QUICK_CHIPS.map((chip) => {
+                const active = category === chip.category;
+                return (
+                  <button
+                    key={chip.label}
+                    type="button"
+                    onClick={() => setCategory(chip.category)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                        : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-accent"
+                    }`}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Category (optional)</Label>
@@ -97,17 +129,19 @@ function DashboardPage() {
             </div>
             <div className="space-y-2">
               <Label>Language</Label>
-              <div className="flex rounded-md border border-input p-1">
+              <div className="inline-flex w-full items-center rounded-full bg-[oklch(0.22_0.09_255)] p-1">
                 {(["English", "Urdu"] as const).map((lang) => (
                   <button
                     key={lang}
                     type="button"
                     onClick={() => setLanguage(lang)}
-                    className={`flex-1 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
-                      language === lang ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                    className={`flex-1 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
+                      language === lang
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "bg-transparent text-white/70 hover:text-white"
                     }`}
                   >
-                    {lang === "Urdu" ? "اردو" : "English"}
+                    {lang === "Urdu" ? "اردو" : "EN"}
                   </button>
                 ))}
               </div>
