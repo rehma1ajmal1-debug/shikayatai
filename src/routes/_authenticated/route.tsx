@@ -2,6 +2,8 @@ import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, LogOut, History, PlusCircle } from "lucide-react";
+import { TopBar } from "@/components/site/top-bar";
+import { SiteFooter } from "@/components/site/footer";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -21,7 +23,8 @@ function AuthenticatedLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <TopBar />
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Link to="/dashboard" className="flex items-center gap-2 font-semibold">
@@ -43,7 +46,8 @@ function AuthenticatedLayout() {
           </nav>
         </div>
       </header>
-      <main><Outlet /></main>
+      <main className="flex-1"><Outlet /></main>
+      <SiteFooter />
     </div>
   );
 }

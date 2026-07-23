@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Building2, AlertTriangle, MapPin, Paperclip, ArrowLeft } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 
 export const Route = createFileRoute("/_authenticated/results/$id")({
   head: () => ({
@@ -41,7 +42,9 @@ function ResultPage() {
   const isUrdu = data.language === "Urdu";
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <>
+      <Breadcrumbs items={[{ label: "Complaint Form", to: "/dashboard" }, { label: "Results" }]} />
+      <div className="mx-auto max-w-3xl px-6 py-10">
       <div className="mb-6 flex items-center justify-between">
         <Link to="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />Back
@@ -96,7 +99,8 @@ function ResultPage() {
           </Section>
         </div>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }
 
