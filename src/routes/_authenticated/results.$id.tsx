@@ -21,12 +21,20 @@ export const Route = createFileRoute("/_authenticated/results/$id")({
   component: ResultPage,
 });
 
-const URGENCY_STYLE: Record<string, string> = {
-  Low: "bg-muted text-muted-foreground border-border",
-  Medium: "bg-amber-50 text-amber-900 border-amber-200",
-  High: "bg-orange-50 text-orange-900 border-orange-200",
-  Emergency: "bg-red-50 text-red-900 border-red-200",
+const URGENCY_PILL: Record<string, string> = {
+  Low: "bg-green-600",
+  Medium: "bg-amber-500",
+  High: "bg-orange-500",
+  Emergency: "bg-red-600",
 };
+
+function evidenceIcon(text: string): string {
+  const t = text.toLowerCase();
+  if (/\bvideo|footage|recording|cctv\b/.test(t)) return "🎥";
+  if (/\bphoto|picture|image|snap\b/.test(t)) return "📷";
+  if (/\blocation|address|gps|map|coordinate|landmark\b/.test(t)) return "📍";
+  return "📄";
+}
 
 function ResultPage() {
   const { id } = Route.useParams();
@@ -64,7 +72,7 @@ function ResultPage() {
             {data.subject}
           </h1>
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${URGENCY_STYLE[data.urgency] ?? URGENCY_STYLE.Low}`}>
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm ${URGENCY_PILL[data.urgency] ?? URGENCY_PILL.Low}`}>
               <AlertTriangle className="h-3 w-3" />{data.urgency}
             </span>
             {data.category && <Badge variant="secondary">{data.category}</Badge>}
@@ -77,6 +85,30 @@ function ResultPage() {
             <p dir={isUrdu ? "rtl" : "ltr"}>{data.department}</p>
           </Section>
 
+          <Section title="Your Original Message vs. Formal Complaint">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg bg-muted/60 p-4">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  What you wrote
+                </div>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">
+                  {data.original_text}
+                </p>
+              </div>
+              <div className="rounded-lg border-l-4 border-primary bg-card p-4 shadow-sm">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">
+                  AI-Formatted Complaint
+                </div>
+                <div
+                  className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
+                  dir={isUrdu ? "rtl" : "ltr"}
+                >
+                  {data.formal_complaint}
+                </div>
+              </div>
+            </div>
+          </Section>
+
           <Section title="Formal complaint">
             <div
               className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
@@ -87,9 +119,12 @@ function ResultPage() {
           </Section>
 
           <Section icon={<Paperclip className="h-4 w-4" />} title="Evidence to attach">
-            <ul className="list-disc space-y-1 pl-5" dir={isUrdu ? "rtl" : "ltr"}>
+            <ul className="space-y-2">
               {data.suggested_evidence.map((e: string, i: number) => (
-                <li key={i} className="text-sm">{e}</li>
+                <li key={i} className="flex items-start gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm">
+                  <span className="text-base leading-none">{evidenceIcon(e)}</span>
+                  <span className="flex-1">{e}</span>
+                </li>
               ))}
             </ul>
           </Section>
