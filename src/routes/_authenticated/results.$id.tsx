@@ -109,15 +109,6 @@ function ResultPage() {
             </div>
           </Section>
 
-          <Section title="Formal complaint">
-            <div
-              className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
-              dir={isUrdu ? "rtl" : "ltr"}
-            >
-              {data.formal_complaint}
-            </div>
-          </Section>
-
           <Section icon={<Paperclip className="h-4 w-4" />} title="Evidence to attach">
             <ul className="space-y-2">
               {data.suggested_evidence.map((e: string, i: number) => (
