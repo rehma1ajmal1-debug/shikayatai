@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2, Wand2 } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -56,15 +57,17 @@ function DashboardPage() {
   const canSubmit = text.trim().length >= 10 && !mutation.isPending;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <div className="mb-8">
+    <>
+      <Breadcrumbs items={[{ label: "Complaint Form" }]} />
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Describe your issue</h1>
         <p className="mt-2 text-muted-foreground">
           Write in plain language — we'll rewrite it as a formal complaint and tell you where to send it.
         </p>
-      </div>
+        </div>
 
-      <Card className="p-6 shadow-[var(--shadow-card)]">
+        <Card className="p-6 shadow-[var(--shadow-card)]">
         <div className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="issue">What happened?</Label>
@@ -127,7 +130,8 @@ function DashboardPage() {
             <p className="text-xs text-muted-foreground text-center">Add a little more detail (at least 10 characters).</p>
           )}
         </div>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, PlusCircle } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
@@ -34,7 +35,9 @@ function HistoryPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <>
+      <Breadcrumbs items={[{ label: "Your Complaints" }]} />
+      <div className="mx-auto max-w-4xl px-6 py-10">
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your complaints</h1>
@@ -78,6 +81,7 @@ function HistoryPage() {
           </Link>
         ))}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
