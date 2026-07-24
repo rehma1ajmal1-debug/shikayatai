@@ -1,12 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { listComplaints } from "@/lib/complaints.functions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { listComplaints, deleteComplaint } from "@/lib/complaints.functions";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, PlusCircle } from "lucide-react";
+import { FileText, PlusCircle, Trash2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { useState } from "react";
+import type { Tables } from "@/integrations/supabase/types";
+
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
