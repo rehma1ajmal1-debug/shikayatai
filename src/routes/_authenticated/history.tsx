@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useState } from "react";
-import type { Tables } from "@/integrations/supabase/types";
+
+type ListItem = Awaited<ReturnType<typeof listComplaints>>[number];
+
 
 
 export const Route = createFileRoute("/_authenticated/history")({
