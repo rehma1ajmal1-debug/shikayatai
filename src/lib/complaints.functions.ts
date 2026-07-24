@@ -17,6 +17,31 @@ const ResultSchema = z.object({
   filing_location: z.string(),
 });
 
+async function geocodeFilingLocation(location: string): Promise<
+  { lat: number; lng: number; maps_url: string } | null
+> {
+  try {
+    const q = encodeURIComponent(`${location}, Pakistan`);
+    const url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": "ShikayatAI/1.0", Accept: "application/json" },
+    });
+    if (!res.ok) return null;
+    const arr = (await res.json()) as Array<{ lat: string; lon: string }>;
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    const lat = Number(arr[0].lat);
+    const lng = Number(arr[0].lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return {
+      lat,
+      lng,
+      maps_url: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function callLovableAI(prompt: string, language: string) {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("Missing LOVABLE_API_KEY");
@@ -67,6 +92,8 @@ export const generateComplaint = createServerFn({ method: "POST" })
     const userPrompt = `Category: ${data.category || "Unspecified"}\nLanguage: ${data.language}\nUser's description:\n${data.text}`;
     const result = await callLovableAI(userPrompt, data.language);
 
+    const geo = await geocodeFilingLocation(result.filing_location);
+
     const { data: row, error } = await context.supabase
       .from("complaints")
       .insert({
@@ -80,6 +107,9 @@ export const generateComplaint = createServerFn({ method: "POST" })
         urgency: result.urgency,
         suggested_evidence: result.suggested_evidence,
         filing_location: result.filing_location,
+        filing_location_lat: geo?.lat ?? null,
+        filing_location_lng: geo?.lng ?? null,
+        filing_location_maps_url: geo?.maps_url ?? null,
       })
       .select()
       .single();
