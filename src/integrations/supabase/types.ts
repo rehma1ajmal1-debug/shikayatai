@@ -20,6 +20,9 @@ export type Database = {
           created_at: string
           department: string
           filing_location: string
+          filing_location_lat: number | null
+          filing_location_lng: number | null
+          filing_location_maps_url: string | null
           formal_complaint: string
           id: string
           language: string
@@ -34,6 +37,9 @@ export type Database = {
           created_at?: string
           department: string
           filing_location: string
+          filing_location_lat?: number | null
+          filing_location_lng?: number | null
+          filing_location_maps_url?: string | null
           formal_complaint: string
           id?: string
           language?: string
@@ -48,6 +54,9 @@ export type Database = {
           created_at?: string
           department?: string
           filing_location?: string
+          filing_location_lat?: number | null
+          filing_location_lng?: number | null
+          filing_location_maps_url?: string | null
           formal_complaint?: string
           id?: string
           language?: string

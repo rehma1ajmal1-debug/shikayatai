@@ -6,7 +6,7 @@ import { downloadComplaintPdf } from "@/lib/complaint-pdf";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Building2, AlertTriangle, MapPin, Paperclip, ArrowLeft } from "lucide-react";
+import { Download, Building2, AlertTriangle, MapPin, Paperclip, ArrowLeft, ExternalLink } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 
 export const Route = createFileRoute("/_authenticated/results/$id")({
@@ -122,6 +122,27 @@ function ResultPage() {
 
           <Section icon={<MapPin className="h-4 w-4" />} title="Where to file">
             <p className="text-sm" dir={isUrdu ? "rtl" : "ltr"}>{data.filing_location}</p>
+            {data.filing_location_lat != null && data.filing_location_lng != null && (
+              <div className="mt-3 overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+                <iframe
+                  title="Filing location map"
+                  className="h-56 w-full border-0"
+                  loading="lazy"
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${data.filing_location_lng - 0.01}%2C${data.filing_location_lat - 0.01}%2C${data.filing_location_lng + 0.01}%2C${data.filing_location_lat + 0.01}&marker=${data.filing_location_lat}%2C${data.filing_location_lng}`}
+                />
+                <div className="flex justify-end border-t border-border bg-muted/40 p-2">
+                  <a
+                    href={data.filing_location_maps_url ?? `https://www.google.com/maps/search/?api=1&query=${data.filing_location_lat},${data.filing_location_lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button size="sm" variant="secondary">
+                      <ExternalLink className="mr-2 h-4 w-4" />Get Directions
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            )}
           </Section>
         </div>
       </Card>
