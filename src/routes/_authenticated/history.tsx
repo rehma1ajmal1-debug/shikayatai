@@ -1,12 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { listComplaints } from "@/lib/complaints.functions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { listComplaints, deleteComplaint } from "@/lib/complaints.functions";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, PlusCircle } from "lucide-react";
+import { FileText, PlusCircle, Trash2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { useState } from "react";
+
+type ListItem = Awaited<ReturnType<typeof listComplaints>>[number];
+
+
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
@@ -29,10 +43,32 @@ const URGENCY_VARIANT: Record<string, string> = {
 
 function HistoryPage() {
   const list = useServerFn(listComplaints);
+  const remove = useServerFn(deleteComplaint);
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["complaints"],
     queryFn: () => list(),
   });
+  const [deleting, setDeleting] = useState<ListItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  async function handleDelete() {
+    if (!deleting) return;
+    setIsDeleting(true);
+    try {
+      await remove({ data: { id: deleting.id } });
+      queryClient.setQueryData<ListItem[]>(["complaints"], (old) =>
+        old ? old.filter((c) => c.id !== deleting.id) : old,
+      );
+      toast.success("Complaint deleted.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to delete complaint.");
+    } finally {
+      setIsDeleting(false);
+      setDeleting(null);
+    }
+  }
+
 
   return (
     <>
@@ -61,27 +97,51 @@ function HistoryPage() {
 
       <div className="space-y-3">
         {data?.map((c) => (
-          <Link key={c.id} to="/results/$id" params={{ id: c.id }} className="block">
-            <Card className="p-4 transition-shadow hover:shadow-[var(--shadow-elegant)]">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <h3 className="truncate font-semibold">{c.subject}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {c.department} · {new Date(c.created_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  {c.category && <Badge variant="secondary">{c.category}</Badge>}
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${URGENCY_VARIANT[c.urgency] ?? URGENCY_VARIANT.Low}`}>
-                    {c.urgency}
-                  </span>
-                </div>
+          <Card key={c.id} className="p-4 transition-shadow hover:shadow-[var(--shadow-elegant)]">
+            <div className="flex items-start justify-between gap-4">
+              <Link to="/results/$id" params={{ id: c.id }} className="block min-w-0 flex-1">
+                <h3 className="truncate font-semibold">{c.subject}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {c.department} · {new Date(c.created_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                </p>
+              </Link>
+              <div className="flex shrink-0 items-center gap-2">
+                {c.category && <Badge variant="secondary">{c.category}</Badge>}
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${URGENCY_VARIANT[c.urgency] ?? URGENCY_VARIANT.Low}`}>
+                  {c.urgency}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-destructive h-8 w-8"
+                  aria-label="Delete complaint"
+                  onClick={() => setDeleting(c)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            </Card>
-          </Link>
+            </div>
+          </Card>
         ))}
       </div>
       </div>
+
+      <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this complaint?</DialogTitle>
+            <DialogDescription>This cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleting(null)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
