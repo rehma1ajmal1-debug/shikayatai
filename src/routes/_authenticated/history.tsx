@@ -49,15 +49,15 @@ function HistoryPage() {
     queryKey: ["complaints"],
     queryFn: () => list(),
   });
-  const [deleting, setDeleting] = useState<Tables<"complaints"> | null>(null);
+  const [deleting, setDeleting] = useState<ListItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleDelete() {
     if (!deleting) return;
     setIsDeleting(true);
     try {
-      await remove({ id: deleting.id });
-      queryClient.setQueryData<Tables<"complaints">[]>(["complaints"], (old) =>
+      await remove({ data: { id: deleting.id } });
+      queryClient.setQueryData<ListItem[]>(["complaints"], (old) =>
         old ? old.filter((c) => c.id !== deleting.id) : old,
       );
       toast.success("Complaint deleted.");
@@ -68,6 +68,7 @@ function HistoryPage() {
       setDeleting(null);
     }
   }
+
 
   return (
     <>
