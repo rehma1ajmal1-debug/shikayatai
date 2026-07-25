@@ -80,10 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ShikayatAI — File professional civic complaints in minutes" },
       { name: "description", content: "Turn everyday problems — broken roads, water leaks, power cuts, garbage — into professional, ready-to-submit complaints with the right department and evidence." },
-      { property: "og:title", content: "ShikayatAI — Formal complaints made simple" },
-      { property: "og:description", content: "Describe the issue in plain language and get a formal complaint, department, urgency, and filing guidance." },
+      { property: "og:title", content: "ShikayatAI — File professional civic complaints in minutes" },
+      { property: "og:description", content: "Turn everyday problems — broken roads, water leaks, power cuts, garbage — into professional, ready-to-submit complaints with the right department and evidence." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ShikayatAI — File professional civic complaints in minutes" },
+      { name: "twitter:description", content: "Turn everyday problems — broken roads, water leaks, power cuts, garbage — into professional, ready-to-submit complaints with the right department and evidence." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/aece6ce6-aaef-4506-8151-d06a567b0921/id-preview-b5bf2a64--4903c034-edc0-407c-aac2-bbe126ce4d2a.lovable.app-1784896486408.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/aece6ce6-aaef-4506-8151-d06a567b0921/id-preview-b5bf2a64--4903c034-edc0-407c-aac2-bbe126ce4d2a.lovable.app-1784896486408.png" },
     ],
     links: [
       {
