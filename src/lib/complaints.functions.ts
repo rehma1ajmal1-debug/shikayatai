@@ -74,6 +74,8 @@ Only the 'subject' and 'formal_complaint' fields should be translated to the req
   });
 
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403)
+      throw new Error("AI service authentication failed. Please try again in a moment.");
     if (res.status === 429) throw new Error("AI rate limit reached. Please try again in a moment.");
     if (res.status === 402) throw new Error("AI credits exhausted. Please add credits in Lovable.");
     throw new Error(`AI request failed: ${res.status}`);
