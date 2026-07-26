@@ -27,12 +27,8 @@ const esc = (s: string) =>
 async function downloadUrduComplaintPdf(c: ComplaintPdfData) {
   const html2canvas = (await import("html2canvas")).default;
 
-  const host = document.createElement("div");
-  host.setAttribute("aria-hidden", "true");
-  host.style.cssText =
-    "position:fixed;left:-10000px;top:0;width:794px;background:#ffffff;z-index:-1;";
-  host.innerHTML = `
-    <div style="width:794px;box-sizing:border-box;padding:56px;background:#ffffff;color:#141414;font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq',serif;">
+  const body = `
+    <div id="sheet" style="width:794px;box-sizing:border-box;padding:56px;background:#ffffff;color:#141414;font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq',serif;">
       <div style="font-size:24px;font-weight:700;color:#1e40af;font-family:Helvetica,Arial,sans-serif;">ShikayatAI — Formal Complaint</div>
       <div style="border-bottom:1px solid #1e40af;margin:14px 0 16px;"></div>
       <div style="font-size:12px;color:#5a5a5a;font-family:Helvetica,Arial,sans-serif;">Date: ${esc(todayLabel())}</div>
@@ -56,10 +52,26 @@ async function downloadUrduComplaintPdf(c: ComplaintPdfData) {
       <div style="margin-top:24px;font-size:15px;font-weight:700;color:#1e40af;font-family:Helvetica,Arial,sans-serif;">Where to File</div>
       <div style="margin-top:8px;font-size:13px;line-height:1.7;font-family:Helvetica,Arial,sans-serif;">${esc(c.filing_location)}</div>
     </div>`;
-  document.body.appendChild(host);
+
+  // Rendered inside an isolated iframe so the app's stylesheet (which uses
+  // oklch colors that html2canvas cannot parse) never reaches the clone.
+  const frame = document.createElement("iframe");
+  frame.setAttribute("aria-hidden", "true");
+  frame.style.cssText =
+    "position:fixed;left:-10000px;top:0;width:794px;height:1200px;border:0;background:#ffffff;";
+  document.body.appendChild(frame);
 
   try {
-    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+    const fdoc = frame.contentDocument!;
+    fdoc.open();
+    fdoc.write(
+      `<!doctype html><html><head><meta charset="utf-8">` +
+        `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap">` +
+        `</head><body style="margin:0;background:#ffffff;color:#141414;">${body}</body></html>`,
+    );
+    fdoc.close();
+
+    const fonts = (fdoc as Document & { fonts?: FontFaceSet }).fonts;
     if (fonts?.load) {
       await Promise.all([
         fonts.load("400 17px 'Noto Nastaliq Urdu'"),
@@ -67,12 +79,18 @@ async function downloadUrduComplaintPdf(c: ComplaintPdfData) {
       ]).catch(() => undefined);
       await fonts.ready.catch(() => undefined);
     }
+    await new Promise((r) => setTimeout(r, 150));
 
-    const canvas = await html2canvas(host.firstElementChild as HTMLElement, {
+    const sheet = fdoc.getElementById("sheet") as HTMLElement;
+    frame.style.height = `${sheet.scrollHeight + 40}px`;
+
+    const canvas = await html2canvas(sheet, {
       scale: 2,
       backgroundColor: "#ffffff",
       useCORS: true,
       logging: false,
+      windowWidth: 794,
+      windowHeight: sheet.scrollHeight + 40,
     });
 
     const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -93,7 +111,7 @@ async function downloadUrduComplaintPdf(c: ComplaintPdfData) {
 
     doc.save(pdfFilename(c));
   } finally {
-    host.remove();
+    frame.remove();
   }
 }
 
