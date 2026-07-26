@@ -89,8 +89,6 @@ async function downloadUrduComplaintPdf(c: ComplaintPdfData) {
       backgroundColor: "#ffffff",
       useCORS: true,
       logging: false,
-      windowWidth: 794,
-      windowHeight: sheet.scrollHeight + 40,
     });
 
     const doc = new jsPDF({ unit: "pt", format: "a4" });
