@@ -57,7 +57,7 @@ function ResultPage() {
         <Link to="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />Back
         </Link>
-        <Button onClick={() => downloadComplaintPdf(data)}>
+        <Button onClick={() => { void downloadComplaintPdf(data); }}>
           <Download className="mr-2 h-4 w-4" />Download as PDF
         </Button>
       </div>
