@@ -12,7 +12,7 @@ Live App
 
 🔗 Live URL (primary): https://shikayatai.lovable.app  
 
-🔗 Live URL (mirror): shikayatai.vercel.app  
+🔗 Live URL (mirror): https://shikayatai.vercel.app   
 
 Both links run the same app and UI. The Lovable link is the primary/reference deployment, using a Supabase Edge Function that calls the Google Gemini API directly with the system prompt documented below. Vercel mirror uses Lovable's AI gateway for complaint generation, with a formatted fallback template if the AI call fails, to ensure the app never breaks for the end user 
 
