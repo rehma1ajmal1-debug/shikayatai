@@ -13,7 +13,12 @@ export interface ComplaintPdfData {
 }
 
 function pdfFilename(c: ComplaintPdfData) {
-  return `complaint-${c.subject.slice(0, 40).replace(/[^a-z0-9]+/gi, "-").toLowerCase() || "shikayatai"}.pdf`;
+  const slug = c.subject
+    .slice(0, 40)
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  return `complaint-${slug || "shikayatai"}.pdf`;
 }
 
 function todayLabel() {
